@@ -3,14 +3,16 @@ package pl.javastart.wydatex;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class ExpenseListActivity extends Activity{
+public class ExpenseListActivity extends Activity {
 
     private ListView expenseListView;
 
@@ -22,14 +24,6 @@ public class ExpenseListActivity extends Activity{
         expenseListView = (ListView) findViewById(R.id.listView);
         expenseListView.setAdapter(new ExpenseListAdapter());
 
-        Button newExpenseButton = (Button) findViewById(R.id.add_expense);
-        newExpenseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ExpenseActivity.class);
-                startActivity(intent);
-            }
-        });
     }
 
     @Override
@@ -68,6 +62,28 @@ public class ExpenseListActivity extends Activity{
             price.setText(String.format("%.2f", item.getPrice()) + "zł");
             category.setText(item.getCategory().getName());
             return convertView;
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item){
+        switch(item.getItemId()){
+            case R.id.add_new_expense:
+                Intent intent = new Intent(getApplicationContext(), ExpenseActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.preferences:
+                intent = new Intent(getApplicationContext(), PreferenceActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onMenuItemSelected(featureId, item);
         }
     }
 }

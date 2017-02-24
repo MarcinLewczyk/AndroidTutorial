@@ -2,6 +2,8 @@ package pl.javastart.wydatex;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -25,14 +27,6 @@ public class ExpenseActivity extends Activity{
         priceEditText = (EditText) findViewById(R.id.expense_price);
 
         categorySpinner.setAdapter(new CategoryAdapter());
-
-        Button newExpenseButton = (Button) findViewById(R.id.add_expense);
-        newExpenseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addNewExpense();
-            }
-        });
 
     }
 
@@ -71,6 +65,23 @@ public class ExpenseActivity extends Activity{
             TextView textView = (TextView) convertView.findViewById(android.R.id.text1);
             textView.setText(getItem(position).getName());
             return convertView;
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.expense_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item){
+        switch (item.getItemId()){
+            case R.id.save:
+                addNewExpense();
+                return true;
+            default:
+                return super.onMenuItemSelected(featureId, item);
         }
     }
 }
