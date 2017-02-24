@@ -3,12 +3,13 @@ package pl.javastart.wydatex;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -30,6 +31,11 @@ public class ExpenseListActivity extends Activity {
     protected void onStart(){
         super.onStart();
         expenseListView.invalidateViews();
+    }
+
+    public void settingsButton(View view) {
+        Intent intent = new Intent(getApplicationContext(), PreferencesActivity.class);
+        startActivity(intent);
     }
 
     private class ExpenseListAdapter extends BaseAdapter{
@@ -79,7 +85,7 @@ public class ExpenseListActivity extends Activity {
                 startActivity(intent);
                 return true;
             case R.id.preferences:
-                intent = new Intent(getApplicationContext(), PreferenceActivity.class);
+                intent = new Intent(getApplicationContext(), PreferencesActivity.class);
                 startActivity(intent);
                 return true;
             default:

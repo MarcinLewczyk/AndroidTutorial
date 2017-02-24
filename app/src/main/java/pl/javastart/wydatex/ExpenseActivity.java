@@ -1,33 +1,61 @@
 package pl.javastart.wydatex;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 public class ExpenseActivity extends Activity{
 
+    private static final String PREF_LAST_CATEGORY = "pref.last.category";
+
     private EditText titleEditText;
     private EditText priceEditText;
     private Spinner categorySpinner;
+
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_expense);
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
         categorySpinner = (Spinner) findViewById(R.id.expense_category);
         titleEditText = (EditText) findViewById(R.id.expense_name);
         priceEditText = (EditText) findViewById(R.id.expense_price);
 
         categorySpinner.setAdapter(new CategoryAdapter());
 
+        if(shouldCareAboutLastCategory()){
+            loadLastCategory(categorySpinner);
+        }
+        loadDefaultValues();
+
+    }
+
+    private boolean shouldCareAboutLastCategory(){
+        return sharedPreferences.getBoolean("pref_save_category", false);
+    }
+
+    private void loadDefaultValues(){
+        boolean defaultValues = sharedPreferences.getBoolean("pref_default_values", false);
+        if(defaultValues){
+            String defaultName = sharedPreferences.getString("pref_default_name", "");
+            String defaultPrice = sharedPreferences.getString("pref_default_price", "9.99");
+
+            titleEditText.setText(defaultName);
+            priceEditText.setText(defaultPrice);
+        }
     }
 
     private void addNewExpense() {
@@ -36,6 +64,11 @@ public class ExpenseActivity extends Activity{
         ExpenseCategory category = (ExpenseCategory) categorySpinner.getSelectedItem();
         Expense expense = new Expense(title, price, category);
         ExpenseDatabase.addExpense(expense);
+
+        if(shouldCareAboutLastCategory()){
+            saveLastCategory(category);
+        }
+
         finish();
     }
 
@@ -82,6 +115,21 @@ public class ExpenseActivity extends Activity{
                 return true;
             default:
                 return super.onMenuItemSelected(featureId, item);
+        }
+    }
+
+    private void saveLastCategory(ExpenseCategory expenseCategory){
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(PREF_LAST_CATEGORY, expenseCategory.name());
+        editor.commit();
+    }
+
+    private void loadLastCategory(Spinner categorySpinner){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String lastCategoryName = prefs.getString(PREF_LAST_CATEGORY, "");
+        if(!lastCategoryName.isEmpty()){
+            int id = ExpenseCategory.getId(lastCategoryName);
+            categorySpinner.setSelection(id);
         }
     }
 }

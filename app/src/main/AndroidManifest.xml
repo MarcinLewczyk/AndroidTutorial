@@ -28,6 +28,9 @@
             android:name=".ExpenseActivity"
             android:label="Dodaj wydatek"
             />
+        <activity
+            android:name=".PreferencesActivity"
+            android:label="Ustawienia" />
     </application>
 
 </manifest>
